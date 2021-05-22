@@ -1,6 +1,0 @@
-Exception: STATUS_ACCESS_VIOLATION at eip=6102A6AE
-eax=612A4854 ebx=0000000B ecx=7F2ECAB8 edx=7F2ECC30 esi=00000000 edi=7F2ECC30
-ebp=0000000B esp=7F2ECAF0 program=C:\Program Files\GNS3\dynamips.exe, pid 2892, thread unknown (0xB98)
-cs=001B ds=0023 es=0023 fs=003B gs=0000 ss=0023
-Stack trace:
-Frame     Function  Args

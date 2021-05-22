@@ -1,0 +1,23 @@
+docentes, externos, core servicos  e deepzone deny tudo de telnet e ssh (a WAN tem de ter telnet e ssh (acho) ) e so permitir nestes routers se vier do softloopback,
+OU SEJA ... so se pode fazer ssh e telnet a partir do softloopback(tirando na WAN, q pode ter ssh e telnet a vontade pra tudo)
+
+No core servicos configurar as ACL's de modo a permitir tbm os servicos de DNS, HTTP E SSH
+->HTTP- Porto 443
+->SSH- Porto 22
+->DNS- Porto 53
+
+
+
+
+FAZER DPS DO STOR RESPONDER AO MAIL:
+. No router EXTERNOS ter em atencao, nao usar o secret, usar password juntamente com os usernames....
+
+
+SABER: 
+.Dps das rotas verificar se a nossa NAT foi bem implementada na WAN
+.No router externos ter em ATENCAO(Pq têm de funcionar como se fosse C2600):
+	-> Nao se pode usar o secret nos usernames(meter password, e encriptar c um comando q acho q era este: service password-encryption)
+	-> acho q a implementacao de acls tbm vai ser dificultada
+.O logging é em todos os routers ou so na deepzone?
+.Se tambem devemos permitir um telnet do malorie ao core-servicos(com uma acl dynamic)-> se tal for vdd, ent no core servicos vamos ter 2 acls: a zone based +(esta) dynamic... Onde metemos este username "myaccess", no malorie ou no core-servicos?
+.Se sao realmente os banners exec e login

@@ -1,0 +1,145 @@
+autostart = False
+version = 0.8.5
+[127.0.0.1:7202]
+    workingdir = C:\Documents and Settings\Cisco\Desktop\Cisco\GNS3\Dynamips
+    udp = 10201
+    [[7200]]
+        image = C:\Documents and Settings\Cisco\Desktop\Cisco\GNS3\Images\uncompressed\c7200-advipservicesk9-mz.151-4.M2.bin
+        ram = 512
+        idlepc = 0x60608040
+        sparsemem = True
+    [[ETHSW SW5]]
+        1 = access 1 R3 e1/0
+        2 = access 1 nio_gen_eth:\device\npf_{bec02d48-2dcb-42ad-9722-f0f2cc86c765}
+        3 = access 1 NIO_udp:30001:127.0.0.1:20001
+        x = 54.6421356237
+        y = -40.1005050634
+        z = 1.0
+    [[ROUTER R3]]
+        console = 2104
+        aux = 2503
+        cnfg = configs\R3.cfg
+        slot0 = C7200-IO-FE
+        f0/0 = R1 e1/0
+        slot1 = PA-4E
+        e1/0 = SW5 1
+        x = 54.0
+        y = -163.0
+        z = 1.0
+        hx = -22.5
+        hy = -15.0
+[127.0.0.1:7200]
+    workingdir = C:\Documents and Settings\Cisco\Desktop\Cisco\GNS3\Dynamips
+    udp = 10001
+    [[7200]]
+        image = C:\Documents and Settings\Cisco\Desktop\Cisco\GNS3\Images\uncompressed\c7200-advipservicesk9-mz.151-4.M2.bin
+        ram = 512
+        idlepc = 0x60608040
+        sparsemem = True
+    [[ETHSW SW4]]
+        1 = access 1 R1 e1/1
+        2 = access 1 NIO_udp:30002:127.0.0.1:20002
+        x = 247.5
+        y = -264.0
+        z = 1.0
+    [[ROUTER R1]]
+        console = 2101
+        aux = 2501
+        cnfg = configs\R1.cfg
+        slot0 = C7200-IO-FE
+        f0/0 = R2 f0/0
+        slot1 = PA-4E
+        e1/0 = R3 f0/0
+        e1/1 = SW4 1
+        symbol = router_firewall
+        x = 53.0
+        y = -269.0
+        z = 1.0
+        hx = 20.5
+        hy = -21.0
+[127.0.0.1:7201]
+    workingdir = C:\Documents and Settings\Cisco\Desktop\Cisco\GNS3\Dynamips
+    udp = 10101
+    [[7200]]
+        image = C:\Documents and Settings\Cisco\Desktop\Cisco\GNS3\Images\uncompressed\c7200-advipservicesk9-mz.151-4.M2.bin
+        ram = 512
+        idlepc = 0x60608040
+        sparsemem = True
+    [[ROUTER R2]]
+        console = 2102
+        aux = 2502
+        cnfg = configs\R2.cfg
+        slot0 = C7200-IO-FE
+        f0/0 = R1 f0/0
+        slot1 = PA-4E
+        e1/0 = NIO_udp:30000:127.0.0.1:20000
+        x = -118.343145751
+        y = -269.0
+        z = 1.0
+[GNS3-DATA]
+    configs = configs
+    m11 = 1.41421356237
+    m22 = 1.41421356237
+    [[NOTE 1]]
+        text = "Soft(Loopback)\n  193.137.78.1"
+        x = -63.0
+        y = 72.0
+    [[NOTE 2]]
+        text = "8.8.8.0/24"
+        x = 138.806132548
+        y = -284.529003976
+    [[NOTE 3]]
+        text = "Firewall"
+        x = 60.811183182
+        y = -313.227488785
+    [[NOTE 4]]
+        text = "     VPCS 2\n193.137.78.2"
+        x = 146.0
+        y = 73.0
+    [[NOTE 5]]
+        text = "    VPCS 1\n192.168.1.1"
+        x = -128.0
+        y = -70.0
+    [[NOTE 6]]
+        text = "193.137.78.0/24"
+        x = 135.450793489
+        y = -43.058874503
+    [[NOTE 7]]
+        text = "192.168.1.0"
+        x = -173.440692221
+        y = -197.3574311
+    [[NOTE 8]]
+        text = "VPCS 3\n8.8.8.8"
+        x = 264.0
+        y = -100.0
+    [[Cloud C4]]
+        symbol = Host
+        x = 156.5
+        y = 9.5
+        z = 1.0
+        connections = SW5:3:NIO_udp:30001:127.0.0.1:20001
+    [[Cloud C3]]
+        symbol = Host
+        x = 254.5
+        y = -156.5
+        z = 1.0
+        connections = SW4:2:NIO_udp:30002:127.0.0.1:20002
+    [[Cloud C2]]
+        symbol = Host
+        x = -116.5
+        y = -125.5
+        z = 1.0
+        connections = R2:e1/0:NIO_udp:30000:127.0.0.1:20000
+    [[Cloud XP]]
+        symbol = Host
+        x = -43.5
+        y = 4.5
+        z = 1.0
+        connections = SW5:2:nio_gen_eth:\device\npf_{bec02d48-2dcb-42ad-9722-f0f2cc86c765}
+    [[SHAPE 1]]
+        type = rectangle
+        x = -152.0
+        y = -165.0
+        width = 135.0
+        height = 141.0
+        border_style = 4

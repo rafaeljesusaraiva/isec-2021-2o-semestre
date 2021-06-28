@@ -1,0 +1,41 @@
+
+VER ROTAS ENTRE DOCENTE E EXTERNO
+TIRAR LOGGING OUTROS ROUTERS
+
+Docentes (CBAC)
+
+ip access-list extended deny_cbac_g1/0_in
+    deny ip 193.137.1.0 0.0.0.3 any
+    deny ip 193.137.2.0 0.0.0.3 any
+
+ip inspect name doc_serv tcp
+ip inspect name doc_serv udp
+ip inspect name doc_serv icmp
+
+int g1/0
+    ip inspect doc_serv out
+
+
+
+Externo (Reflective)
+
+ip access-list extended deny_outside_g1/0_out
+    permit ip any 193.137.1.0 0.0.0.3 reflect rede_externo timeout 10
+    permit ip any 193.137.2.0 0.0.0.3 reflect rede_externo timeout 10
+
+ip access-list extended deny_outside_g1/0_in
+    evaluate rede_externo
+    deny ip any any
+
+
+
+
+Dynamic (core servicos)
+
+(eu)
+access-list 151 dynamic core_dynamic_f0/0_in timeout 10 permit icmp 193.137.2.0 0.0.0.3 193.136.6.2 0.0.0.3
+int f0/0
+    ip access-group core_dynamic_f0/0_in in
+
+
+

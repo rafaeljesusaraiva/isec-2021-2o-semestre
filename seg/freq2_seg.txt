@@ -1,0 +1,57 @@
+1. (10%)
+    Imagine que pretendia enviar uma mensagem secreta para uma determinada pessoa, utilizando um mecanismo de encriptação desenvolvido por si. Explique em que medida a criptanálise é importante para ajudar na criação desse mecanismo.
+
+A criptoanálise, seria importante para poder desenvolver um método que tornasse a descoberta da chave o mais difícil possível. Podendo seguir várias técnicas, como por exemplo, um processo criptográfico após uma esteganografia. Dessa maneira, após ter escondido a mensagem num método de envio (ou até numa outra mensagem), poderia proceder a encriptar o resultado, tendo assim duas camadas de proteção. Logo, só quem soubesse como teria sido encriptado e escondido é que depois conseguiria proceder à leitura da mensagem original.
+
+
+2. (15%)
+    Explique as diferenças entre os modos de operação Cipher Block Chaining (CBC) e Cipher Feedback (CFB)
+
+A Cipher Feedback - CFB, ao contrário da Cipher Block Chaining - CBC, é um modo de operação para uma cifra do bloco, enquanto que a CBC trata de encriptar um número de bits em plaintext de cada vez. Criando duas opções de encriptação e envio de conteúdo plaintext..
+A CBC tem muito mais vulnerabilidades, porque a criação do bloco do criptograma tem dependência do plaintext do bloco anterior. Dessa maneira, é fácil descobrir o plain text de um segundo bloco, caso o resultado criptado seja igual. Pelo contrário, o modo CFB transforma uma cifra por blocos numa cifra contínua, sendo que cada bloco é produzido por uma chave fixa juntamente com o bloco do criptograma anterior. Tornando a descoberta do plain text, muito mais difícil.
+
+
+3. (25%)
+    Explique, de forma detalhada e sustentando com exemplos, as dificuldades associadas à cifra contínua para os seguintes fatores:
+        1) Manipulação de chaves
+        2) Implementação da confusão
+        3) Implementação da difusão
+
+
+
+
+4. (10%)
+    Explique as diferenças entre as cifras simétricas e assimétricas. Sustente as suas afirmações com exemplos concretos, salientando as vantagens e desvantagens de cada um
+
+As cifras simétricas, usam uma única chave que precisa de ser partilhada entre os equipamentos que irão receber a mensagem, enquanto as assimétricas usam um par de chaves públicas e privadas para encriptar e desencriptar mensagens. Desse modo, basta o atancante interceptar o envio da chave única para conseguir aceder à mensagem.
+Também as simétricas foram criadas muito antes das assimétricas, dando mais tempo para explorar vulnerabilidades.
+O uso de cifras assimétricas requere maior poder de processamento, visto ser mais recente e complexo, ao contrário da simétrica.
+O comprimento das chaves usadas nas cifras simétricas é menor, dando menos possibilidades de realizar um ataque force-brute à mesma, enquanto que as assimétricas usam chaves de tamanhos 2048 bits para cima (sendo este o tamanho recomendado). Sendo neste momento quase impossível fazer um ataque brute-force a uma cifra assimétrica.
+
+
+5. (15%)
+    Considere os seguintes valores obtidos na fase de "expansion box" da cifra DES. Pretende-se que realize as fases "Key mixing" e "Substitution and compression box", apresentando os valores que são obtidos em cada uma das fases. Explique em detalhe estes passos e os cálculos efetuados.
+
+        E(R[0]) = 011011 101101
+        K = 110011 101110
+
+Para realizar a fase de "key mixing" é necessário fazer uma combinação XOR entra a expansion box e a chave. 
+Fazendo output de 1 para cada bit que não coincidir.
+Resultando no valor seguinte: XOR = 101000 000011
+De seguida, para a fase de substituição, o resultado é dividido em 8 grupos de 6 bits:
+B[1] = ...
+B[2] = ...
+...
+Após a substituição realiza-se a compressão, usando o valor decimal na matriz (em binário) em apenas 4 bits.
+B[1] = ...
+....
+Assim terminam as fases de "Key mixing" e "Substitution and compression box". (Valores na compressão não apresentados visto faltar o calculo da divisão em bits)
+
+
+6. (25%)
+    Explique em detalhe o funcionamento da rede Feistel, não esquecendo de explicar onde se encontram localizadas as diversas fazes de substituição, compressão, expansão, para as cifras DES e AES.
+
+O funcionamento da rede Feistel revolve num modelo que deriva de diversos blocos de cifras, desse modo consistindo em múltiplas passagens, sendo que em cada uma é feita uma substituição seguida de uma troca.
+O processo de funcionamento na cifra DES é o seguinte: 
+Em cada uma das passagens, é aplicada sempre a mesma função com uma chave. Inicializando assim a primeira fase, a expansão, em que a metade direita do bloco da fase anterior é expandida, passando de 32 bits para 48 bits. Na segunda fase é tratada a mistura de chaves, em que a expansão é combinada com a chave derivada por XOR. Passando para a terceira fase, a substituição e compressão, em que o resultado XOR é dividido em grupos, e cada grupo estimula uma s-box a produzir 4 bits numa transformação não linear. O valor decimal encontrado na matriz é representado no seu binário equivalente (em apenas 4 bits). Por fim, passa para a permutação, com os 4 bits produzidos espalha-se por 6 s-boxes distintas na passagem seguinte.
+Para a cifra AES, esta não se baseia numa rede Feistel, apesar de seguir um método de operações igual, em que contém uma chave/bloco em que é feita substituição (SubBytes), de seguida uma permutação (ShiftRows) em que troca todas as linhas excepto a primeira do state, uma combinação (MixColumns) em que troca os bits de cada coluna, e finalmente a operação AddRoundKey, que resulta num estado que é multiplicado com uma chave específica dessa round (por XOR)...

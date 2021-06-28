@@ -1,0 +1,172 @@
+ time-range fimdesemana
+     periodic weekend 00:00 to 23:59
+
+ ip access-list extended bloq_internet_f0/0_in
+     remark Filtro Docentes e Externos (router Docentes e Externos)
+     remark ** Permitir trafego rede interna para exterior
+     permit ip any 193.137.1.0 0.0.0.3 reflect rede_interna timeout 300
+     permit ip any 193.137.2.0 0.0.0.3 reflect rede_interna timeout 300
+     remark ** Permitir trafego na rede interna (mesmo ao fim-de-semana)
+     permit udp any 193.136.6.0 0.0.0.7 reflect interna_org_udp timeout 300
+     permit tcp any 193.136.6.0 0.0.0.7 reflect interna_org_tcp timeout 300
+     permit icmp any 193.136.6.0 0.0.0.7 reflect interna_org_icmp timeout 300
+     remark ** Permitir trafego para deepzone
+     permit ip any 192.168.200.0 0.0.0.3 reflect interna_deepzone timeout 300
+     permit ip any 192.136.5.0 0.0.0.3 reflect wan_core timeout 300
+     remark ** Bloquear trafego ao fim de semana
+     deny ip any 193.137.1.0 0.0.0.3 time-range fimdesemana
+     deny ip any 193.137.2.0 0.0.0.3 time-range fimdesemana
+
+ip access-list extended bloq_internet_f0/0_out
+     evaluate rede_interna
+     evaluate interna_org_udp
+     evaluate interna_org_tcp
+     evaluate interna_org_icmp
+     evaluate interna_deepzone
+     evaluate wan_core
+
+
+!!!!!!!!!! Lembrar fazer uma acl standard entre docentes e externos (na wan)
+
+----- JA ESTA -----
+
+ip access-list extended proteg_redeInterna_g2/0_in
+     remark Filtro Impede Acesso Externo a Rede Interna (router WAN)
+     remark ** Rede entre routers
+     deny ip 193.137.1.0 0.0.0.3 193.136.1.0 0.0.0.3
+     deny ip 193.137.1.0 0.0.0.3 193.136.2.0 0.0.0.3
+     deny ip 193.137.2.0 0.0.0.3 193.136.1.0 0.0.0.3
+     deny ip 193.137.2.0 0.0.0.3 193.136.2.0 0.0.0.3
+     remark ** Rede local
+     deny ip 193.137.1.0 0.0.0.3 192.168.100.0 0.0.0.3
+     deny ip 193.137.1.0 0.0.0.3 192.168.101.0 0.0.0.3
+     deny ip 193.137.2.0 0.0.0.3 192.168.100.0 0.0.0.3
+     deny ip 193.137.2.0 0.0.0.3 192.168.101.0 0.0.0.3
+
+ip access-list extended anti_spoofing_in
+     remark Filtro Anti-Spoofing (router WAN)
+     deny ip 193.136.1.0 0.0.0.3 any
+     deny ip 193.136.2.0 0.0.0.3 any
+     deny ip 193.136.5.0 0.0.0.3 any
+     deny ip 193.136.6.0 0.0.0.7 any
+     deny ip 192.168.100.0 0.0.0.3 any
+     deny ip 192.168.101.0 0.0.0.3 any
+     deny ip 192.168.200.0 0.0.0.3 any
+     deny ip host 0.0.0.0 any
+     deny ip 127.0.0.0 0.255.255.255 any
+     permit ip any any
+
+ip access-list extended anti_spoofing_out
+     remark Filtro Anti-Spoofing (router WAN)
+     deny ip 10.0.0.0 0.255.255.255 any
+     deny ip 172.16.0.0 0.15.255.255 any
+     deny ip 192.168.0.0 0.0.255.255 any
+     deny ip 193.137.2.0 0.0.0.3 any
+     deny ip 193.137.1.0 0.0.0.3 any
+     permit ip any any
+
+ip access-list extended bloq_ssh_internet_in
+     remark Filtro Bloqueia SSH e TELNET de fora (router WAN)
+     deny tcp any host 193.137.1.2 eq 23
+     deny tcp any host 193.137.1.2 eq 22
+     permit ip any any
+
+ip access-list extended perm_ssh_telnet_internos_f0/0_out
+     remark Permitir acesso SSH e telnet a routers internos (router DeepZone)
+     permit tcp 192.168.200.0 0.0.0.3 193.136.6.0 0.0.0.7 eq 22
+     permit tcp 192.168.200.0 0.0.0.3 193.136.6.0 0.0.0.7 eq 23
+     permit tcp 192.168.200.0 0.0.0.3 193.136.5.0 0.0.0.3 eq 22
+     permit tcp 192.168.200.0 0.0.0.3 193.136.5.0 0.0.0.3 eq 23
+     permit tcp 192.168.200.0 0.0.0.3 193.136.1.0 0.0.0.3 eq 22
+     permit tcp 192.168.200.0 0.0.0.3 193.136.1.0 0.0.0.3 eq 23
+     permit tcp 192.168.200.0 0.0.0.3 193.136.2.0 0.0.0.3 eq 22
+     permit tcp 192.168.200.0 0.0.0.3 193.136.2.0 0.0.0.3 eq 23
+     permit tcp 192.168.200.0 0.0.0.3 192.168.100.0 0.0.0.3 eq 22
+     permit tcp 192.168.200.0 0.0.0.3 192.168.100.0 0.0.0.3 eq 23
+     permit tcp 192.168.200.0 0.0.0.3 192.168.101.0 0.0.0.3 eq 22
+     permit tcp 192.168.200.0 0.0.0.3 192.168.101.0 0.0.0.3 eq 23
+     permit icmp 192.168.200.0 0.0.0.3 193.136.6.0 0.0.0.7
+     permit icmp 192.168.200.0 0.0.0.3 193.136.5.0 0.0.0.3
+     permit icmp 192.168.200.0 0.0.0.3 193.136.1.0 0.0.0.3
+     permit icmp 192.168.200.0 0.0.0.3 193.136.2.0 0.0.0.3
+     permit icmp 192.168.200.0 0.0.0.3 192.168.100.0 0.0.0.3
+     permit icmp 192.168.200.0 0.0.0.3 192.168.101.0 0.0.0.3
+     deny ip any any
+
+ip access-list extended perm_intern_docent_g1/0_out
+     remark Permitir acesso TCP, UDP e ICMP (router Docentes)
+     permit tcp 192.168.100.0 0.0.0.3 any reflect docInter_tcp timeout 600
+     permit udp 192.168.100.0 0.0.0.3 any reflect docInter_udp timeout 600
+     permit icmp 192.168.100.0 0.0.0.3 any reflect docInter_icmp timeout 600
+     deny ip any any
+
+ip access-list extended perm_intern_docent_g1/0_in
+     evaluate docInter_tcp
+     evaluate docInter_udp
+     evaluate docInter_icmp
+     deny ip any any
+
+ip access-list extended perm_intern_extern_g1/0_out
+     remark Permitir acesso TCP, UDP e ICMP (router Externos)
+     permit tcp 192.168.101.0 0.0.0.3 any reflect extInter_tcp timeout 600
+     permit udp 192.168.101.0 0.0.0.3 any reflect extInter_udp timeout 600
+     permit icmp 192.168.101.0 0.0.0.3 any reflect extInter_icmp timeout 600
+     deny ip any any
+
+ip access-list extended perm_intern_extern_g1/0_in
+     evaluate extInter_tcp
+     evaluate extInter_udp
+     evaluate extInter_icmp
+     deny ip any any
+
+access-list 1 deny 192.168.101.0 0.0.0.3
+     remark ACL standard (router Docentes)
+
+access-list 1 deny 192.168.100.0 0.0.0.3
+     remark ACL standard (router Externos)
+
+(router CoreServicos)
+zone security F0/0
+     desc DMZ
+zone security G1/0
+     desc Core_Dentro
+int f0/0
+     zone-member security F0/0
+int g1/0
+     zone-member security G1/0
+access-list 101 permit tcp any host 193.136.6.2 eq 53
+access-list 101 permit tcp any host 193.136.6.3 eq 80
+access-list 101 permit tcp any host 193.136.6.4 eq 22
+class-map type inspect f0/0_class
+     match access-group 101
+policy-map type inspect F0/0
+     class type inspect f0/0_class
+         inspect
+zone-pair security F0/0-G1/0 source F0/0 destination G1/0
+     service-policy type inspect F0/0
+
+
+------------------------------------
+
+
+IN / OUT
+    In  > Running traffic coming into the interface through an ACL.
+    Out > Running traffic leaving the interface through an ACL.  
+
+REFLECT <nomeTempACL>
+    Reflect é usado para o router manter seguimento da conexão ao exterior e criar um aviso
+ao tráfego de retorno, guardando o aviso numa access-list temporaria <nomeTempACL>
+
+TIMEOUT <timimg>
+    Se os packets da sessão de REFLECT não são detetados dentro do <timing>, o aviso ao tráfego
+de retorno expira. Bloqueando assim o acesso de possíveis ataques man-in-the-middle.
+
+EVALUTATE
+    Comparar se o tráfego a chegar equivale a qualquer um dos reflects criados nas acls IN
+
+REMARK <texto>
+    Comentário para a access-list
+
+
+
+!!!! PROCURAR TIPOS DE ACLs -> STANDARD, EXTENDED, etc....

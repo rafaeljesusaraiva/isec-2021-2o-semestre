@@ -1,0 +1,44 @@
+0123456789 123456789 123456789 123456789 123456789 123456789 123456789
+----------------------------------------------------------------------
+IPv6
+----------------------------------------------------------------------
+- Introduction
+In our example on how to configure IPv6, we will use the GNS3 
+environment named firewall.
+We will configure R1 and R-ISP to communicate using dual-stack IPv6 
+configuration.
+In this scenario, we will be using both IPv4 and IPv6 for communicating. 
+It is important to recall that in this configuration we will need to configure everything for both IP versions: interface IPs, routing, firewall, et cetera. That means that we must configure IP for IPv4 and IPv6, must configure routing for IPv4 and IPv6, and so on.
+
+- Configure IPv6 addresses
+We will use the IP range 2001:1::/64 for configuring the link between R1 and R-ISP.
+So, we will configure 2001:1::1 for R1 S1/0 and 2001:1::2 for R-ISP.
+	- R1
+		conf t
+		ipv6 unicast-routing
+		int s1/9
+	        ipv6 address 2001:1::1/64
+	- R-ISP
+		conf t
+		ipv6 unicast-routing
+		int s1/9
+	        ipv6 address 2001:1::2/64
+	
+Now you can try to ping the IP address in each router:
+	ping 2001:1::1
+	ping 2001:1::2
+
+- Configure IPv6 firewall
+If you want to configure a firewall, it is as much the same as in IPv4.
+However, the command instructions are slightly different to differentiate.
+If you want to allow ICMP from outside network, then you should apply the following ACL
+    conf t
+    ipv6 access-list my_outside
+         remark - allow icmp from outside network
+         permit icmp any any
+         remark - won't allow anything else
+         deny ip any any
+    int s1/0
+         ipv6 traffic-filter my_outside out
+
+

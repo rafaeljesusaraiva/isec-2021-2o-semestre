@@ -1,0 +1,42 @@
+-----------------
+NAT
+-----------------
+- Introdution
+This document explain how you can configure network address translation (NAT) in a Cisco router.
+In this scenario, we are using the firewall environment on the GNS3.
+We aim to configure in such a way that the PC1, with IP 192.168.1.1 will reach the 5.5.5.5 with the IP address 194.65.52.130.
+
+- Prepare the correct interfaces you want to do NAT
+For this step, we need to understand that we must configure the router in such a way that it will understand from which interface it is supposed to arrive the private (RFC1918) traffic and where it should apply the NAT.
+So, in our case, we know that interface F0/0, on the R1, is the nearest interface to the PC1. And we want to apply NAT when traffic is going to the WAN (R-ISP).
+To do this, we apply the following commands:
+	configure terminal
+        int f0/0
+            ip nat inside
+        int s1/0
+            ip nat outside
+
+- Configure an ACL to define which networks should apply the NAT
+We now must define which networks will be subject to NAT operation.
+In our example, we are considering the RFC1918 network 192.168.1.0/24.
+So, the following is true:
+        access-list 1 permit 192.168.1.0 0.0.0.255
+
+With this command we are stating that if the IP address is on 192.168.1.0/24 network range when it reaches the "ip nat inside" interface, then it will be subject to NAT if it is going to an "ip nat outside" interface.
+
+- Define the pool of NAT
+Now, we must define what public IPs will be used to NAT the private IPs.
+That means that router will use these IPs in order to map existing communications.
+To apply this, we will use the following command
+        ip nat pool local_users 194.65.52.130 194.65.52.131 prefix 25
+
+In this example, all RFC1918 IPs defined in ACL 1 will be translated to IP address 194.65.52.130 or 194.65.52.131, depending on the amount of simultaneous communications running at each moment.
+It is advised to give some amount of IPs depending on the load you are expecting in the network.
+Our pool will have the name "local_users". This variable can be whatever we need.
+
+- Map the ACL to the NAT pool
+In the final stage we must associate the ACL to the correct pool, in our case, the "local_user" pool.
+For this we use the following command
+        ip mat inside source list 1 pool local_users
+
+And that's it! :)

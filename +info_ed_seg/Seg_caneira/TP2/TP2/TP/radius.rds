@@ -1,0 +1,7 @@
+1 2020y6m10d 1h24m33s 0 users were loaded.
+2 2020y6m10d 1h24m33s WinRadius is running OK, (Auth port=1812, Acct port=1813, Secret=secret).
+3 2020y6m10d 1h24m33s WinRadius is waiting for NAS' request packets. If no request packet reached, please check your NAS' configuration.
+4 2020y6m10d 1h25m54s Selected collating sequence not supported by the operating system.  : INSERT INTO tbUsers (username,password,groups,addr,cash,expiry,others,method,billtype) VALUES ('remote','remotepwd','','',0,'','','Based on Time','Postpaid')
+5 2020y6m10d 1h25m54s Add user successfully.
+6 2020y6m10d 1h28m24s You have changed some important configuration variances, now you must rastart WinRadius to take effects.
+7 2020y6m10d 1h29m4s User (remote) authenticate OK.
